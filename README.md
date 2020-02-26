@@ -16,4 +16,4 @@ Amazon Alexa does not support playing audio from YouTube. This project allows us
 
 ## Disclaimer
 
-This skill is not officially supported by YouTube and will never be published on Amazon.
+This skill is not officially supported by Amazon or YouTube and will never be published on Amazon.
