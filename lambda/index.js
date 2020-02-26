@@ -6,6 +6,8 @@ const Alexa = require('ask-sdk-core');
 const ytdl = require('ytdl-core');
 const YouTube = require('simple-youtube-api');
 const youtube = new YouTube(process.env.GOOGLE_API);
+let playbackURL = '';
+let offsetInMilliseconds = 0;
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -47,12 +49,13 @@ const PlayIntentHandler = {
         const videos = await ytdl.getInfo(videoInfo[0].id);
         const audios = ytdl.filterFormats(videos.formats, 'audioonly');
 
+        url = audios[0].url;
         return handlerInput.responseBuilder
             .speak(`Now playing ${videoInfo[0].title} on YouTube`)
             .withShouldEndSession(true)
             .withStandardCard(videoInfo[0].title, '', `https://i.ytimg.com/vi/${videoInfo[0].id}/hqdefault.jpg`)
             .addAudioPlayerPlayDirective('REPLACE_ALL', audios[0].url, 0, 0, null)
-            .getResponse();    
+            .getResponse();
     }
 };
 
@@ -79,12 +82,57 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.PauseIntent');
     },
     handle(handlerInput) {
-        // const speakOutput = 'Goodbye!';
         return handlerInput.responseBuilder
-            // .speak(speakOutput)
+            // .speak('Goodbye!')
             .addAudioPlayerStopDirective()
             .getResponse();
     }
+};
+
+const ResumeIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.ResumeIntent';
+    },
+    handle(handlerInput) {
+        return handlerInput.responseBuilder
+            .withShouldEndSession(true)
+            .addAudioPlayerPlayDirective('REPLACE_ALL', playbackURL, 0, offsetInMilliseconds, null)
+            .getResponse();
+    }
+};
+
+const AudioPlayerEventHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type.startsWith('AudioPlayer.');
+    },
+    async handle(handlerInput) {
+        const { requestEnvelope, responseBuilder } = handlerInput;
+        const audioPlayerEventName = requestEnvelope.request.type.split('.')[1];
+
+        switch (audioPlayerEventName) {
+            case 'PlaybackStarted':
+                console.log('PlaybackStarted');
+                break;
+            case 'PlaybackFinished':
+                console.log('PlaybackFinished');
+                break;
+            case 'PlaybackStopped':
+                console.log('PlaybackStopped', handlerInput.requestEnvelope.request.offsetInMilliseconds);
+                offsetInMilliseconds = handlerInput.requestEnvelope.request.offsetInMilliseconds;
+                break;
+            case 'PlaybackNearlyFinished':
+                console.log('PlaybackNearlyFinished');
+                break;
+            case 'PlaybackFailed':
+                console.log('Playback Failed :', handlerInput.requestEnvelope.request.error);
+                return;
+            default:
+                throw new Error('Should never reach here!');
+        }
+
+        return responseBuilder.getResponse();
+    },
 };
 
 const SessionEndedRequestHandler = {
@@ -142,9 +190,11 @@ exports.handler = Alexa.SkillBuilders.custom()
         LaunchRequestHandler,
         HelloWorldIntentHandler,
         PlayIntentHandler,
+        ResumeIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
+        AudioPlayerEventHandler,
         IntentReflectorHandler, // make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
     )
     .addErrorHandlers(
