@@ -1,0 +1,80 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "youtube",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PauseIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
+        },
+        {
+          "name": "PlayIntent",
+          "slots": [
+            {
+              "name": "query",
+              "type": "VIDEOS"
+            }
+          ],
+          "samples": [
+            "play {query}",
+            "to stream {query}",
+            "to play {query}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "VIDEOS",
+          "values": [
+            {
+              "name": {
+                "value": "faded"
+              }
+            },
+            {
+              "name": {
+                "value": "alone"
+              }
+            },
+            {
+              "name": {
+                "value": "high on life"
+              }
+            },
+            {
+              "name": {
+                "value": "burn"
+              }
+            },
+            {
+              "name": {
+                "value": "without you"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "version": "16"
+}
