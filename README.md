@@ -1,6 +1,6 @@
 # Alexa YouTube Skill
 
-### Amazon Alexa does not support playing audio from YouTube. This project allows users to search and play audio from YouTube.
+Amazon Alexa does not support playing audio from YouTube. This project allows users to search and play audio from YouTube.
 
 > Alexa, ask youtube to play Faded.
 
