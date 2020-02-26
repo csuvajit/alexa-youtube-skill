@@ -12,7 +12,7 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     async handle(handlerInput) {
-        const speakOutput = 'Welcome to YouTube';
+        const speakOutput = 'Welcome to YouTube Skill';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -45,14 +45,14 @@ const PlayIntentHandler = {
 
         const videoInfo = await youtube.searchVideos(query, 1).catch(() => null);
         const videos = await ytdl.getInfo(videoInfo[0].id);
-        const audio = ytdl.filterFormats(videos.formats, 'audioonly');
+        const audios = ytdl.filterFormats(videos.formats, 'audioonly');
 
         return handlerInput.responseBuilder
             .speak(`Now playing ${videoInfo[0].title} on YouTube`)
             .withShouldEndSession(true)
             .withStandardCard(videoInfo[0].title, '', `https://i.ytimg.com/vi/${videoInfo[0].id}/hqdefault.jpg`)
-            .addAudioPlayerPlayDirective('REPLACE_ALL', audio[0].url, 0, 0, null)
-            .getResponse();
+            .addAudioPlayerPlayDirective('REPLACE_ALL', audios[0].url, 0, 0, null)
+            .getResponse();    
     }
 };
 
