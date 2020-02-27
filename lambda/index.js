@@ -49,11 +49,11 @@ const PlayIntentHandler = {
         const videos = await ytdl.getInfo(videoInfo[0].id);
         const audios = ytdl.filterFormats(videos.formats, 'audioonly');
 
-        url = audios[0].url;
+        playbackURL = audios[0].url;
         return handlerInput.responseBuilder
             .speak(`Now playing ${videoInfo[0].title} on YouTube`)
             .withShouldEndSession(true)
-            .withStandardCard(videoInfo[0].title, '', `https://i.ytimg.com/vi/${videoInfo[0].id}/hqdefault.jpg`)
+            .withStandardCard(videoInfo[0].title, `By ${videoInfo[0].channel.title}`, `https://i.ytimg.com/vi/${videoInfo[0].id}/hqdefault.jpg`)
             .addAudioPlayerPlayDirective('REPLACE_ALL', audios[0].url, 0, 0, null)
             .getResponse();
     }
