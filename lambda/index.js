@@ -50,11 +50,12 @@ const PlayIntentHandler = {
         const audios = ytdl.filterFormats(videos.formats, 'audioonly');
 
         playbackURL = audios[0].url;
+        offsetInMilliseconds = 0;
         return handlerInput.responseBuilder
             .speak(`Now playing ${videoInfo[0].title} on YouTube`)
             .withShouldEndSession(true)
             .withStandardCard(videoInfo[0].title, `By ${videoInfo[0].channel.title}`, `https://i.ytimg.com/vi/${videoInfo[0].id}/hqdefault.jpg`)
-            .addAudioPlayerPlayDirective('REPLACE_ALL', audios[0].url, 0, 0, null)
+            .addAudioPlayerPlayDirective('REPLACE_ALL', playbackURL, 0, offsetInMilliseconds, null)
             .getResponse();
     }
 };
@@ -118,8 +119,8 @@ const AudioPlayerEventHandler = {
                 console.log('PlaybackFinished');
                 break;
             case 'PlaybackStopped':
-                console.log('PlaybackStopped', handlerInput.requestEnvelope.request.offsetInMilliseconds);
                 offsetInMilliseconds = handlerInput.requestEnvelope.request.offsetInMilliseconds;
+                console.log('PlaybackStopped', offsetInMilliseconds);
                 break;
             case 'PlaybackNearlyFinished':
                 console.log('PlaybackNearlyFinished');
